@@ -1,0 +1,79 @@
+/* 全局样式 */
+
+/* 五行布局核心样式 */
+.five-row-layout {
+  @apply w-full max-w-7xl mx-auto px-4 py-8;
+}
+
+/* 首行固定样式 */
+.first-row-fixed {
+  @apply sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md;
+}
+
+/* 响应式容器 */
+.responsive-container {
+  @apply w-full;
+  @media (max-width: 768px) {
+    @apply px-2;
+  }
+}
+
+/* 卡片悬浮效果 */
+.card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+}
+
+/* 骨架屏加载动画 */
+.skeleton-loading {
+  @apply animate-pulse bg-gray-200 dark:bg-gray-700;
+}
+
+/* 图片懒加载占位 */
+.image-placeholder {
+  @apply bg-gray-100 dark:bg-gray-800 flex items-center justify-center;
+}
+
+/* 作品滚动容器 */
+.works-scroll-container {
+  @apply overflow-hidden relative;
+}
+
+/* 作品滚动行 */
+.works-scroll-row {
+  @apply flex gap-4;
+  animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* 暂停滚动 */
+.works-scroll-row.paused {
+  animation-play-state: paused;
+}
+
+/* 返回顶部按钮 */
+.back-to-top {
+  @apply fixed bottom-8 right-8 z-50 p-3 rounded-full bg-accent text-white shadow-lg hover:opacity-90 transition-opacity duration-200;
+}
+
+/* 编辑模式标识 */
+.edit-mode-active {
+  @apply ring-2 ring-accent ring-offset-2;
+}
+
+/* 弹窗淡入淡出 */
+.modal-fade-in {
+  @apply animate-fade-in;
+}
+
+/* 按钮点击反馈 */
+.btn-click-feedback {
+  @apply active:scale-95 transition-transform duration-100;
+}
