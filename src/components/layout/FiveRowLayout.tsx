@@ -85,16 +85,33 @@ export function FiveRowLayout() {
         project={selectedProject}
         open={!!selectedProject}
         onClose={() => setSelectedProject(null)}
+        onNavigate={(dir) => {
+          const idx = data.featuredProjects.findIndex(p => p.id === selectedProject?.id);
+          const newIdx = dir === 'prev' ? (idx > 0 ? idx - 1 : data.featuredProjects.length - 1) : (idx < data.featuredProjects.length - 1 ? idx + 1 : 0);
+          setSelectedProject(data.featuredProjects[newIdx]);
+        }}
+        allProjects={data.featuredProjects}
       />
       <ArticleDetailModal
         article={selectedArticle}
         open={!!selectedArticle}
         onClose={() => setSelectedArticle(null)}
+        onNavigate={(dir) => {
+          const idx = data.latestArticles.findIndex(a => a.id === selectedArticle?.id);
+          const newIdx = dir === 'prev' ? (idx > 0 ? idx - 1 : data.latestArticles.length - 1) : (idx < data.latestArticles.length - 1 ? idx + 1 : 0);
+          setSelectedArticle(data.latestArticles[newIdx]);
+        }}
+        allArticles={data.latestArticles}
       />
       <WorkDetailModal
         work={selectedWork}
         open={!!selectedWork}
         onClose={() => setSelectedWork(null)}
+        onNavigate={(dir) => {
+          const idx = data.works.findIndex(w => w.id === selectedWork?.id);
+          const newIdx = dir === 'prev' ? (idx > 0 ? idx - 1 : data.works.length - 1) : (idx < data.works.length - 1 ? idx + 1 : 0);
+          setSelectedWork(data.works[newIdx]);
+        }}
         allWorks={data.works}
       />
     </>
