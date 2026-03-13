@@ -5,9 +5,11 @@
   @apply w-full max-w-7xl mx-auto px-4 py-8;
 }
 
-/* 首行固定样式 */
+/* 首行样式 - 不固定，随页面滚动 */
 .first-row-fixed {
-  @apply sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md;
+  @apply bg-white dark:bg-gray-900;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* 响应式容器 */

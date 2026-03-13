@@ -131,7 +131,7 @@ function FirstRow({ data, onAvatarClick }: FirstRowProps) {
 
   return (
     <section 
-      className={`first-row-fixed sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 ${
+      className={`first-row-fixed bg-white dark:bg-gray-900 shadow-sm rounded-lg p-6 ${
         isMobile ? 'block' : 'grid'
       }`}
       style={!isMobile ? { gridTemplateColumns: '1fr 1fr', gap: '2rem' } : {}}
