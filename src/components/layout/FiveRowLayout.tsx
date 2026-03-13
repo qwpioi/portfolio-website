@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Modal, Image } from 'antd';
+import { Modal, Image as AntImage } from 'antd';
 import { useData } from '../../context/DataContext';
 import { config } from '../../config';
 import { useResponsive } from '../../hooks/useResponsive';
+import { LazyAvatar, LazyImage } from '../common/LazyImage';
 import { EmptyProjects, EmptyArticles, EmptyWorks } from '../common/EmptyState';
 import { WorkDetailModal, ProjectDetailModal, ArticleDetailModal } from '../common/WorkDetailModal';
 import type { PortfolioData, Project, Article, WorkItem } from '../../types';
@@ -58,10 +59,10 @@ export function FiveRowLayout() {
         width={400}
       >
         <div className="flex justify-center py-8">
-          <Image
+          <AntImage
             src={data.basicInfo.avatar || ''}
             alt={data.basicInfo.name}
-            className="rounded-full"
+            className="rounded-full w-64 h-64 mx-auto"
             fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
             preview={false}
           />
@@ -121,24 +122,17 @@ function FirstRow({ data, onAvatarClick }: FirstRowProps) {
       {/* 左侧：基础信息 */}
       <div className={`flex ${isMobile ? 'flex-col items-center text-center mb-6' : 'items-center gap-4 text-left'}`}>
         <div 
-          className={`w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 cursor-pointer ${
-            isMobile ? 'mx-auto mb-4' : ''
+          className={`flex-shrink-0 cursor-pointer ${
+            isMobile ? 'mx-auto mb-4' : 'w-24 h-24'
           }`}
           onClick={onAvatarClick}
         >
-          {data.basicInfo.avatar ? (
-            <img
-              src={data.basicInfo.avatar}
-              alt={data.basicInfo.name}
-              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
-            </div>
-          )}
+          <LazyAvatar
+            src={data.basicInfo.avatar || ''}
+            alt={data.basicInfo.name}
+            size="md"
+            className={isMobile ? '' : 'w-24 h-24 hover:scale-110 transition-transform duration-300'}
+          />
         </div>
         <div className={isMobile ? 'text-center' : 'flex-1 text-left'}>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -298,21 +292,12 @@ function ThirdRow({ data, onProjectClick }: ThirdRowProps) {
               className="card rounded-lg overflow-hidden card-hover cursor-pointer"
               onClick={() => onProjectClick(project)}
             >
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
-                {project.cover ? (
-                  <img
-                    src={project.cover}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+              <LazyImage
+                src={project.cover || ''}
+                alt={project.title}
+                className="aspect-video"
+                placeholder="gray"
+              />
               <div className="p-4">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
                   {project.title}
@@ -368,21 +353,12 @@ function FourthRow({ data, onArticleClick }: FourthRowProps) {
               className="card rounded-lg overflow-hidden card-hover cursor-pointer"
               onClick={() => onArticleClick(article)}
             >
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
-                {article.cover ? (
-                  <img
-                    src={article.cover}
-                    alt={article.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+              <LazyImage
+                src={article.cover || ''}
+                alt={article.title}
+                className="aspect-video"
+                placeholder="gray"
+              />
               <div className="p-4">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
                   {article.title}
@@ -466,19 +442,12 @@ function FifthRow({ data, onWorkClick }: FifthRowProps) {
                     }`}
                     onClick={() => onWorkClick(work)}
                   >
-                    {work.image ? (
-                      <img
-                        src={work.image}
-                        alt={`作品 ${index + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                        </svg>
-                      </div>
-                    )}
+                    <LazyImage
+                      src={work.image || ''}
+                      alt={`作品 ${index + 1}`}
+                      className="w-full h-full hover:scale-105 transition-transform duration-300"
+                      placeholder="gray"
+                    />
                   </div>
                 ))}
               </div>

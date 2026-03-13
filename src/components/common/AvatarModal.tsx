@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Modal, Image } from 'antd';
+import { Modal } from 'antd';
 import { useData } from '../../context/DataContext';
+import { LazyImage } from './LazyImage';
 
 /**
  * 头像放大弹窗
@@ -39,12 +40,12 @@ export function AvatarModal({ triggerElement }: AvatarModalProps) {
         width={400}
       >
         <div className="flex justify-center py-8">
-          <Image
+          <LazyImage
             src={data.basicInfo.avatar || ''}
             alt={data.basicInfo.name}
-            className="rounded-full"
-            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
-            preview={false}
+            className="w-64 h-64 rounded-full mx-auto"
+            placeholder="blur"
+            circular
           />
         </div>
         <div className="text-center space-y-2">

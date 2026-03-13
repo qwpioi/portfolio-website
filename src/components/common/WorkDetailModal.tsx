@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, Image, Carousel } from 'antd';
+import { Modal } from 'antd';
+import { LazyImage } from './LazyImage';
 import type { WorkItem } from '../../types';
 
 /**
@@ -29,14 +30,11 @@ export function WorkDetailModal({ work, open, onClose, allWorks = [] }: WorkDeta
       <div className="py-4">
         {/* 作品图片 */}
         <div className="mb-6 rounded-lg overflow-hidden">
-          <Image
+          <LazyImage
             src={work.image || ''}
             alt={work.description}
-            className="w-full"
-            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
-            preview={{
-              mask: '点击查看原图',
-            }}
+            className="w-full aspect-video"
+            placeholder="blur"
           />
         </div>
 
@@ -106,14 +104,11 @@ export function ProjectDetailModal({ project, open, onClose }: ProjectDetailModa
       <div className="py-4 space-y-6">
         {/* 项目封面 */}
         <div className="rounded-lg overflow-hidden">
-          <Image
+          <LazyImage
             src={project.cover || ''}
             alt={project.title}
-            className="w-full aspect-video object-cover"
-            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
-            preview={{
-              mask: '点击查看原图',
-            }}
+            className="w-full aspect-video"
+            placeholder="blur"
           />
         </div>
 
@@ -195,14 +190,11 @@ export function ArticleDetailModal({ article, open, onClose }: ArticleDetailModa
         {/* 文章封面 */}
         {article.cover && (
           <div className="rounded-lg overflow-hidden">
-            <Image
+            <LazyImage
               src={article.cover}
               alt={article.title}
-              className="w-full aspect-video object-cover"
-              fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
-              preview={{
-                mask: '点击查看原图',
-              }}
+              className="w-full aspect-video"
+              placeholder="blur"
             />
           </div>
         )}
