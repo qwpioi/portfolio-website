@@ -1,22 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Modal, Image } from 'antd';
 import { useData } from '../../context/DataContext';
 import { config } from '../../config';
-import { EmptyState, EmptyProjects, EmptyArticles, EmptyWorks } from '../common/EmptyState';
-import type { PortfolioData } from '../../types';
+import { EmptyProjects, EmptyArticles, EmptyWorks } from '../common/EmptyState';
+import { WorkDetailModal, ProjectDetailModal, ArticleDetailModal } from '../common/WorkDetailModal';
+import type { PortfolioData, Project, Article, WorkItem } from '../../types';
 
 /**
  * 五行布局主容器
- * 严格按照 PRD 要求的比例和结构实现
- * 
- * 布局结构：
- * - 第一行：基础信息 + 技术栈 (1:1)
- * - 第二行：项目统计 + 工具图标 (5:4)
- * - 第三行：精选项目 (4 个卡片)
- * - 第四行：最新文章 (4 个卡片)
- * - 第五行：作品展示 (三行滚动图片)
  */
 export function FiveRowLayout() {
   const { data, isLoading } = useData();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedWork, setSelectedWork] = useState<WorkItem | null>(null);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -31,30 +29,85 @@ export function FiveRowLayout() {
   }
 
   return (
-    <div className="five-row-layout w-full max-w-7xl mx-auto px-4 py-8 space-y-8">
-      {/* 第一行：基础信息 + 技术栈 (1:1) */}
-      <FirstRow data={data} />
+    <>
+      <div className="five-row-layout w-full max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* 第一行：基础信息 + 技术栈 (1:1) */}
+        <FirstRow data={data} onAvatarClick={() => setIsAvatarModalOpen(true)} />
 
-      {/* 第二行：项目统计 + 工具图标 (5:4) */}
-      <SecondRow data={data} />
+        {/* 第二行：项目统计 + 工具图标 (5:4) */}
+        <SecondRow data={data} />
 
-      {/* 第三行：精选项目 (4 个卡片) */}
-      <ThirdRow data={data} />
+        {/* 第三行：精选项目 (4 个卡片) */}
+        <ThirdRow data={data} onProjectClick={setSelectedProject} />
 
-      {/* 第四行：最新文章 (4 个卡片) */}
-      <FourthRow data={data} />
+        {/* 第四行：最新文章 (4 个卡片) */}
+        <FourthRow data={data} onArticleClick={setSelectedArticle} />
 
-      {/* 第五行：作品展示 (三行滚动图片) */}
-      <FifthRow data={data} />
-    </div>
+        {/* 第五行：作品展示 (三行滚动图片) */}
+        <FifthRow data={data} onWorkClick={setSelectedWork} />
+      </div>
+
+      {/* 头像弹窗 */}
+      <Modal
+        title={data.basicInfo.name}
+        open={isAvatarModalOpen}
+        onCancel={() => setIsAvatarModalOpen(false)}
+        footer={null}
+        centered
+        width={400}
+      >
+        <div className="flex justify-center py-8">
+          <Image
+            src={data.basicInfo.avatar || ''}
+            alt={data.basicInfo.name}
+            className="rounded-full"
+            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="
+            preview={false}
+          />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            {data.basicInfo.name}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {data.basicInfo.gender} · {data.basicInfo.age}岁
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {data.basicInfo.education} · {data.basicInfo.graduationSchool}
+          </p>
+        </div>
+      </Modal>
+
+      {/* 其他弹窗 */}
+      <ProjectDetailModal
+        project={selectedProject}
+        open={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
+      <ArticleDetailModal
+        article={selectedArticle}
+        open={!!selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+      />
+      <WorkDetailModal
+        work={selectedWork}
+        open={!!selectedWork}
+        onClose={() => setSelectedWork(null)}
+        allWorks={data.works}
+      />
+    </>
   );
 }
 
 /**
  * 第一行组件：基础信息 + 技术栈
- * 比例：1:1，首行滚动固定
  */
-function FirstRow({ data }: { data: PortfolioData }) {
+interface FirstRowProps {
+  data: PortfolioData;
+  onAvatarClick: () => void;
+}
+
+function FirstRow({ data, onAvatarClick }: FirstRowProps) {
   return (
     <section 
       className="first-row-fixed sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6"
@@ -62,16 +115,15 @@ function FirstRow({ data }: { data: PortfolioData }) {
     >
       {/* 左侧：基础信息 */}
       <div className="flex items-center gap-4">
-        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+        <div 
+          className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 cursor-pointer"
+          onClick={onAvatarClick}
+        >
           {data.basicInfo.avatar ? (
             <img
               src={data.basicInfo.avatar}
               alt={data.basicInfo.name}
-              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer"
-              onClick={() => {
-                // TODO: 点击放大头像
-                console.log('点击头像');
-              }}
+              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -136,7 +188,6 @@ function FirstRow({ data }: { data: PortfolioData }) {
 
 /**
  * 第二行组件：项目统计 + 工具图标
- * 比例：5:4
  */
 function SecondRow({ data }: { data: PortfolioData }) {
   return (
@@ -206,9 +257,13 @@ function SecondRow({ data }: { data: PortfolioData }) {
 
 /**
  * 第三行组件：精选项目
- * 固定展示 4 个最新完成项目
  */
-function ThirdRow({ data }: { data: PortfolioData }) {
+interface ThirdRowProps {
+  data: PortfolioData;
+  onProjectClick: (project: Project) => void;
+}
+
+function ThirdRow({ data, onProjectClick }: ThirdRowProps) {
   return (
     <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
@@ -226,6 +281,7 @@ function ThirdRow({ data }: { data: PortfolioData }) {
             <div
               key={project.id}
               className="card rounded-lg overflow-hidden card-hover cursor-pointer"
+              onClick={() => onProjectClick(project)}
             >
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
                 {project.cover ? (
@@ -265,9 +321,13 @@ function ThirdRow({ data }: { data: PortfolioData }) {
 
 /**
  * 第四行组件：最新文章
- * 固定展示 4 篇最新文章
  */
-function FourthRow({ data }: { data: PortfolioData }) {
+interface FourthRowProps {
+  data: PortfolioData;
+  onArticleClick: (article: Article) => void;
+}
+
+function FourthRow({ data, onArticleClick }: FourthRowProps) {
   return (
     <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
@@ -285,6 +345,7 @@ function FourthRow({ data }: { data: PortfolioData }) {
             <div
               key={article.id}
               className="card rounded-lg overflow-hidden card-hover cursor-pointer"
+              onClick={() => onArticleClick(article)}
             >
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
                 {article.cover ? (
@@ -327,10 +388,13 @@ function FourthRow({ data }: { data: PortfolioData }) {
 
 /**
  * 第五行组件：作品展示
- * 三行项目图片相互滚动展示
  */
-function FifthRow({ data }: { data: PortfolioData }) {
-  // 将作品分成 3 行
+interface FifthRowProps {
+  data: PortfolioData;
+  onWorkClick: (work: WorkItem) => void;
+}
+
+function FifthRow({ data, onWorkClick }: FifthRowProps) {
   const rows = [[], [], []] as WorkItem[][];
   data.works.forEach((work, index) => {
     const rowIndex = index % 3;
@@ -350,12 +414,10 @@ function FifthRow({ data }: { data: PortfolioData }) {
               key={rowIndex}
               className="works-scroll-container overflow-hidden"
               onMouseEnter={(e) => {
-                // 悬浮暂停滚动
                 const scrollRow = e.currentTarget.querySelector('.works-scroll-row');
                 scrollRow?.classList.add('paused');
               }}
               onMouseLeave={(e) => {
-                // 恢复滚动
                 const scrollRow = e.currentTarget.querySelector('.works-scroll-row');
                 scrollRow?.classList.remove('paused');
               }}
@@ -366,15 +428,11 @@ function FifthRow({ data }: { data: PortfolioData }) {
                   animation: `scroll-left ${120 / config.animation.scrollSpeed}s linear infinite`,
                 }}
               >
-                {/* 复制一份实现无缝循环 */}
                 {[...row, ...row].map((work, index) => (
                   <div
                     key={`${work.id}-${index}`}
                     className="flex-shrink-0 w-64 aspect-[4/3] bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                    onClick={() => {
-                      // TODO: 点击查看详情
-                      console.log('查看作品详情:', work.description);
-                    }}
+                    onClick={() => onWorkClick(work)}
                   >
                     {work.image ? (
                       <img
@@ -401,6 +459,3 @@ function FifthRow({ data }: { data: PortfolioData }) {
     </section>
   );
 }
-
-// 类型导入
-import type { WorkItem } from '../../types';
