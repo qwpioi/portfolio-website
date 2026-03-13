@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Image } from 'antd';
 import { useData } from '../../context/DataContext';
 import { config } from '../../config';
+import { useResponsive } from '../../hooks/useResponsive';
 import { EmptyProjects, EmptyArticles, EmptyWorks } from '../common/EmptyState';
 import { WorkDetailModal, ProjectDetailModal, ArticleDetailModal } from '../common/WorkDetailModal';
 import type { PortfolioData, Project, Article, WorkItem } from '../../types';
@@ -108,15 +109,21 @@ interface FirstRowProps {
 }
 
 function FirstRow({ data, onAvatarClick }: FirstRowProps) {
+  const { isMobile } = useResponsive();
+
   return (
     <section 
-      className="first-row-fixed sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}
+      className={`first-row-fixed sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 ${
+        isMobile ? 'block' : 'grid'
+      }`}
+      style={!isMobile ? { gridTemplateColumns: '1fr 1fr', gap: '2rem' } : {}}
     >
       {/* 左侧：基础信息 */}
-      <div className="flex items-center gap-4">
+      <div className={`flex ${isMobile ? 'flex-col items-center text-center mb-6' : 'items-center gap-4 text-left'}`}>
         <div 
-          className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 cursor-pointer"
+          className={`w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 cursor-pointer ${
+            isMobile ? 'mx-auto mb-4' : ''
+          }`}
           onClick={onAvatarClick}
         >
           {data.basicInfo.avatar ? (
@@ -133,7 +140,7 @@ function FirstRow({ data, onAvatarClick }: FirstRowProps) {
             </div>
           )}
         </div>
-        <div className="flex-1 text-left">
+        <div className={isMobile ? 'text-center' : 'flex-1 text-left'}>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {data.basicInfo.name}
           </h2>
@@ -190,10 +197,12 @@ function FirstRow({ data, onAvatarClick }: FirstRowProps) {
  * 第二行组件：项目统计 + 工具图标
  */
 function SecondRow({ data }: { data: PortfolioData }) {
+  const { isMobile } = useResponsive();
+
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-9 gap-6">
+    <section className={`grid ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-9'} gap-6`}>
       {/* 左侧：项目统计 (5 份) */}
-      <div className="lg:col-span-5 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 card-hover">
+      <div className={isMobile ? '' : 'lg:col-span-5 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 card-hover'}>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           项目统计
         </h3>
@@ -221,12 +230,12 @@ function SecondRow({ data }: { data: PortfolioData }) {
       </div>
 
       {/* 右侧：工具图标 (4 份) */}
-      <div className="lg:col-span-4 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 card-hover">
+      <div className={isMobile ? 'bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 card-hover' : 'lg:col-span-4 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 card-hover'}>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           常用工具
         </h3>
         {data.toolIcons.length > 0 ? (
-          <div className="grid grid-cols-4 gap-3">
+          <div className={`grid ${isMobile ? 'grid-cols-4' : 'grid-cols-4'} gap-3`}>
             {data.toolIcons.map((tool) => (
               <div
                 key={tool.id}
@@ -264,19 +273,25 @@ interface ThirdRowProps {
 }
 
 function ThirdRow({ data, onProjectClick }: ThirdRowProps) {
+  const { isMobile, isTablet } = useResponsive();
+
   return (
-    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 lg:p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">
           精选项目
         </h3>
-        <button className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-md transition-colors duration-200 btn-click-feedback">
-          查看全部项目 →
+        <button className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-md transition-colors duration-200 btn-click-feedback text-sm lg:text-base">
+          查看全部 →
         </button>
       </div>
 
       {data.featuredProjects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={`grid gap-4 lg:gap-6 ${
+          isMobile ? 'grid-cols-1' : 
+          isTablet ? 'grid-cols-2' : 
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+        }`}>
           {data.featuredProjects.slice(0, config.display.featuredProjects).map((project) => (
             <div
               key={project.id}
@@ -328,19 +343,25 @@ interface FourthRowProps {
 }
 
 function FourthRow({ data, onArticleClick }: FourthRowProps) {
+  const { isMobile, isTablet } = useResponsive();
+
   return (
-    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 lg:p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">
           最新文章
         </h3>
-        <button className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-md transition-colors duration-200 btn-click-feedback">
-          查看全部文章 →
+        <button className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-md transition-colors duration-200 btn-click-feedback text-sm lg:text-base">
+          查看全部 →
         </button>
       </div>
 
       {data.latestArticles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={`grid gap-4 lg:gap-6 ${
+          isMobile ? 'grid-cols-1' : 
+          isTablet ? 'grid-cols-2' : 
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+        }`}>
           {data.latestArticles.slice(0, config.display.latestArticles).map((article) => (
             <div
               key={article.id}
@@ -395,14 +416,23 @@ interface FifthRowProps {
 }
 
 function FifthRow({ data, onWorkClick }: FifthRowProps) {
-  const rows = [[], [], []] as WorkItem[][];
-  data.works.forEach((work, index) => {
-    const rowIndex = index % 3;
-    rows[rowIndex].push(work);
-  });
+  const { isMobile } = useResponsive();
+  
+  // 移动端只显示一行，桌面端显示三行
+  const worksToShow = isMobile ? data.works.slice(0, 10) : data.works;
+  const rows = isMobile 
+    ? [worksToShow] 
+    : [[], [], []] as WorkItem[][];
+  
+  if (!isMobile) {
+    worksToShow.forEach((work, index) => {
+      const rowIndex = index % 3;
+      rows[rowIndex].push(work);
+    });
+  }
 
   return (
-    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+    <section className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 lg:p-6">
       <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
         作品展示
       </h3>
@@ -423,15 +453,17 @@ function FifthRow({ data, onWorkClick }: FifthRowProps) {
               }}
             >
               <div 
-                className="works-scroll-row flex gap-4"
+                className="works-scroll-row flex gap-2 lg:gap-4"
                 style={{
-                  animation: `scroll-left ${120 / config.animation.scrollSpeed}s linear infinite`,
+                  animation: `scroll-left ${isMobile ? 60 : 120 / config.animation.scrollSpeed}s linear infinite`,
                 }}
               >
                 {[...row, ...row].map((work, index) => (
                   <div
                     key={`${work.id}-${index}`}
-                    className="flex-shrink-0 w-64 aspect-[4/3] bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                    className={`flex-shrink-0 aspect-[4/3] bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200 ${
+                      isMobile ? 'w-40' : 'w-64'
+                    }`}
                     onClick={() => onWorkClick(work)}
                   >
                     {work.image ? (
