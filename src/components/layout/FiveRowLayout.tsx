@@ -1,6 +1,7 @@
 import React from 'react';
 import { useData } from '../../context/DataContext';
 import { config } from '../../config';
+import { EmptyState, EmptyProjects, EmptyArticles, EmptyWorks } from '../common/EmptyState';
 import type { PortfolioData } from '../../types';
 
 /**
@@ -256,9 +257,7 @@ function ThirdRow({ data }: { data: PortfolioData }) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p>暂无项目展示</p>
-        </div>
+        <EmptyProjects />
       )}
     </section>
   );
@@ -320,9 +319,7 @@ function FourthRow({ data }: { data: PortfolioData }) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p>暂无文章展示</p>
-        </div>
+        <EmptyArticles />
       )}
     </section>
   );
@@ -399,9 +396,7 @@ function FifthRow({ data }: { data: PortfolioData }) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p>暂无作品展示</p>
-        </div>
+        <EmptyWorks />
       )}
     </section>
   );
