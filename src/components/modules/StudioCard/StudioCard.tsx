@@ -18,10 +18,10 @@ export const StudioCard: React.FC<StudioCardProps> = ({
   };
 
   return (
-    <div className={`${gradientClasses[gradient]} rounded-2xl p-7 text-white hover:-translate-y-1 hover:shadow-xl transition-all duration-300 h-full`}>
+    <div className={`${gradientClasses[gradient]} rounded-2xl p-7 text-white hover:-translate-y-1 hover:shadow-xl transition-all duration-300 max-h-[280px]`}>
       <h3 className="text-2xl font-bold mb-4">{title}</h3>
       
-      <p className="text-white/90 text-sm leading-relaxed mb-6">
+      <p className="text-white/90 text-sm leading-relaxed mb-6 line-clamp-3">
         {description}
       </p>
 

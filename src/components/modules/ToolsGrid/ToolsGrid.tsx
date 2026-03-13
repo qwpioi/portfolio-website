@@ -7,11 +7,14 @@ export const ToolsGrid: React.FC<ToolsGridProps> = ({
   columns = 5,
 }) => {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-7 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 h-full">
+    <div className="bg-white border border-gray-100 rounded-2xl p-7 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 max-h-[280px]">
       <h3 className="text-lg font-semibold text-gray-900 mb-5">{title}</h3>
       
       {/* 工具图标网格 */}
-      <div className={`grid grid-cols-${columns} gap-4`}>
+      <div 
+        className="grid gap-4"
+        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+      >
         {tools.map((tool) => (
           <a
             key={tool.id}
